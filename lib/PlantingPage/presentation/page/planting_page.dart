@@ -136,11 +136,14 @@ class _PlantingPageState extends State<PlantingPage>
 
   @override
   void initState() {
+    // readPreviousDatas();
     listenToNotifications();
     WidgetsBinding.instance.addObserver(this);
     pService = PlantingService();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      runAfterBuild();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await readPreviousDatas();
+      await runAfterBuild();
+      setState(() {});
     });
     WidgetsFlutterBinding.ensureInitialized();
 
@@ -151,28 +154,43 @@ class _PlantingPageState extends State<PlantingPage>
     super.initState();
   }
 
-  void runAfterBuild() async {
+  Future<void> runAfterBuild() async {
     // MyTools.showTutorial(pageName: "PlantingPage", context: context, tutorialItems: tutorialItems);
-    readPreviousDatas();
 
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Run after build')));
     var prefs = await SharedPreferences.getInstance();
     final remain = prefs.getInt('countdownSeconds');
     bool hasToContinue = (remain != null);
 
     if (leftDuration.inSeconds > 0 && hasToContinue) {
       _startWorking();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('start_working')));
       isWorking = true;
     }
   }
 
-  void readPreviousDatas() async {
+  Future<void> setEndTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final DateTime dateTimeNow = DateTime.now();
+    final endTime = dateTimeNow.add(leftDuration);
+    prefs.setString('end_time', endTime.toString());
+  }
+
+  Future<void> readPreviousDatas() async {
     //amirhossein
+
     var prefs = await SharedPreferences.getInstance();
-    final remain = prefs.getInt('countdownSeconds');
-    if (remain != null) {
-      setState(() {
-        leftDuration = Duration(seconds: remain);
-      });
+    var endTime = DateTime.parse(prefs.getString('end_time')!);
+    final DateTime dateTimeNow = DateTime.now();
+
+    int leftseconds = endTime.difference(dateTimeNow).inSeconds;
+
+    if (dateTimeNow.isAfter(endTime)) {
+      await clearTime();
+    } else {
+      leftDuration = Duration(seconds: leftseconds);
     }
 
     _selectedType = Types.values[prefs.getInt("_selectedType") ?? 0];
@@ -259,7 +277,7 @@ class _PlantingPageState extends State<PlantingPage>
           Timer.periodic(const Duration(seconds: 1), (Timer timer) {
         //fixme set duration on 1 seconds
         isWorking = true;
-
+        print(leftDuration.inSeconds);
         if (leftDuration.inSeconds > 0) {
           leftDuration = leftDuration - const Duration(seconds: 1);
         } else {
@@ -462,7 +480,13 @@ class _PlantingPageState extends State<PlantingPage>
                         if (isWorking) {
                           _stopWorking();
                         } else {
-                          initial();
+                          setEndTime();
+                          LocalNotification.scheduleNotification(
+                              title: 'Notruphil',
+                              body: 'this is a notification',
+                              payload: 'timer is down',
+                              time: leftDuration.inSeconds);
+
                           _startWorking();
                           isWorking = true;
                         }
@@ -559,19 +583,6 @@ class _PlantingPageState extends State<PlantingPage>
   }
 
   //amirhossein
-  Future<void> initial() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final remainingSeconds = prefs.getInt('countdownSeconds');
-
-    if (remainingSeconds != null) {
-      setState(() {
-        leftDuration = Duration(seconds: remainingSeconds);
-      });
-    }
-    final DateTime dateTimeNow = DateTime.now();
-    final endTime = dateTimeNow.add(leftDuration);
-    prefs.setString('end_time', endTime.toString());
-  }
 
   //lifecycles
   void didChangeAppLifecycleState(AppLifecycleState state) async {
@@ -580,22 +591,7 @@ class _PlantingPageState extends State<PlantingPage>
       if (leftDuration > Duration.zero) {
         // _stopBackgroundService();
         // removeOverlay();
-        final prefs = await SharedPreferences.getInstance();
-        final endingTime = prefs.getString('end_time');
-
-        if (endingTime != null) {
-          final endTime = DateTime.parse(endingTime);
-          Duration _remaining = endTime.difference(DateTime.now());
-
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setInt('countdownSeconds', _remaining.inSeconds);
-
-          final remain = prefs.getInt('countdownSeconds');
-          Duration rem = Duration(seconds: remain!);
-          setState(() {
-            leftDuration = rem;
-          });
-        }
+        await readPreviousDatas();
       }
     } else if (state == AppLifecycleState.paused) {
       // _startBackgroundService();
