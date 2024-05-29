@@ -1,18 +1,14 @@
-import 'dart:ffi';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class LocalNotification {
   static final String CHANNEL_ID = "413423";
   static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  static final onClickedNotifiction = BehaviorSubject<String>();
+  //static final onClickedNotifiction = BehaviorSubject<String>();
 
   static void onNotificationTap(NotificationResponse notificationResponse) {
-    onClickedNotifiction.add(notificationResponse.payload!);
+    //onClickedNotifiction.add(notificationResponse.payload!);
   }
 
   static Future init() async {
@@ -69,8 +65,8 @@ class LocalNotification {
         title,
         body,
         tz.TZDateTime.now(tz.local).add(Duration(seconds: time)),
-        const NotificationDetails(
-            android: AndroidNotificationDetails('channel 3', 'your channel name',
+        NotificationDetails(
+            android: AndroidNotificationDetails(CHANNEL_ID, 'your channel name',
                 channelDescription: 'your channel description',
                 importance: Importance.max,
                 priority: Priority.high,
