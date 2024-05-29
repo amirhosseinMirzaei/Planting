@@ -52,6 +52,14 @@ class _PlantingPageState extends State<PlantingPage>
 
   // List<TutorialItem> tutorialItems = [];
 
+//amirhossein
+  listenToNotifications() {
+    print('listen to notification');
+    LocalNotification.onClickedNotifiction.stream.listen((event) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => PlantingPage()));
+    });
+  }
 
   void initItems() {
     // tutorialItems.addAll({
@@ -129,6 +137,7 @@ class _PlantingPageState extends State<PlantingPage>
   @override
   void initState() {
     // readPreviousDatas();
+    listenToNotifications();
     WidgetsBinding.instance.addObserver(this);
     pService = PlantingService();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
