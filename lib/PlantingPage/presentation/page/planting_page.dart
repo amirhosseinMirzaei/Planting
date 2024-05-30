@@ -483,7 +483,7 @@ class _PlantingPageState extends State<PlantingPage>
                           setEndTime();
                           LocalNotification.scheduleNotification(
                               title: 'Notruphil',
-                              body: 'this is a notification',
+                              body: 'this is a notification schedule',
                               payload: 'timer is down',
                               time: leftDuration.inSeconds);
 
