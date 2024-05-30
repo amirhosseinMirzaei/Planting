@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:plant/PlantingPage/presentation/page/planting_page.dart';
 import 'package:plant/notification/local_notifictions.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalNotification.init();
+  tz.initializeTimeZones();
+  await NotificationService().initNotification();
   runApp(const MyApp());
 }
 

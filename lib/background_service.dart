@@ -38,9 +38,9 @@ class PlantingService {
     SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
-    updateNotification(
+    /*updateNotification(
         flutterLocalNotificationsPlugin, platformChannelSpecifics,
-        type: type);
+        type: type);*/
   }
 
   void updateNotification(

@@ -55,10 +55,10 @@ class _PlantingPageState extends State<PlantingPage>
 //amirhossein
   listenToNotifications() {
     print('listen to notification');
-    LocalNotification.onClickedNotifiction.stream.listen((event) {
+    /*LocalNotification.onClickedNotifiction.stream.listen((event) {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => PlantingPage()));
-    });
+    });*/
   }
 
   void initItems() {
@@ -182,7 +182,7 @@ class _PlantingPageState extends State<PlantingPage>
     //amirhossein
 
     var prefs = await SharedPreferences.getInstance();
-    var endTime = DateTime.parse(prefs.getString('end_time')!);
+    var endTime = DateTime.parse(prefs.getString('end_time')??DateTime.now().toString());
     final DateTime dateTimeNow = DateTime.now();
 
     int leftseconds = endTime.difference(dateTimeNow).inSeconds;
@@ -281,18 +281,18 @@ class _PlantingPageState extends State<PlantingPage>
         if (leftDuration.inSeconds > 0) {
           leftDuration = leftDuration - const Duration(seconds: 1);
         } else {
-          LocalNotification.showSimpleNotification(
+          /*LocalNotification.showSimpleNotification(
               title: 'Notruphil',
-              body: 'this is a notification',
-              payload: 'timer is down');
+              body: 'this is a notification 4322344234234',
+              payload: 'timer is down');*/
           _overlayEntry.remove();
           writeReportData();
           _stopWorking();
           clearTime(); //cleartimer in sharedpreferenc//amirhossein
-          _showNotification(
+          /*_showNotification(
               title: "خسته نباشی",
               body:
-                  "فعالیت ${getTypeName(type: _selectedType)} شما به پایان رسید");
+                  "فعالیت ${getTypeName(type: _selectedType)} شما به پایان رسید");*/
 
           // MyTools.showAlert(
           //   type: DialogType.success,
@@ -353,7 +353,8 @@ class _PlantingPageState extends State<PlantingPage>
     return WillPopScope(
         onWillPop: _onBackPressed,
         child: Scaffold(
-          // backgroundColor: AppColor.forestBackground,
+           backgroundColor: Colors.green,
+           //backgroundColor: AppColor.forestBackground,
           // bottomNavigationBar: Visibility(visible: !isWorking, child: MyBottomNavigationBar(context: context, index: 3)),
           body: Container(
             margin: const EdgeInsets.only(top: 24),
@@ -481,11 +482,11 @@ class _PlantingPageState extends State<PlantingPage>
                           _stopWorking();
                         } else {
                           setEndTime();
-                          LocalNotification.scheduleNotification(
+                          NotificationService().scheduleNotification(
                               title: 'Notruphil',
-                              body: 'this is a notification schedule',
-                              payload: 'timer is down',
-                              time: leftDuration.inSeconds);
+                              body: 'this is a notification schedule ',
+                              scheduledNotificationDateTime: DateTime.now(),
+                              seconds: leftDuration.inSeconds);
 
                           _startWorking();
                           isWorking = true;
