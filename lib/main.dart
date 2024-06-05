@@ -2,13 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
+
 import 'package:plant/PlantingPage/presentation/page/planting_page.dart';
 
 import 'package:plant/notification/local_notifictions.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:usage_stats/usage_stats.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
