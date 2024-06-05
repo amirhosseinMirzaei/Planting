@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:untitled/dtos/application_data.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:plant/dtos/application_data.dart';
+
 
 class DatabaseService {
   bool _isInitialized = false;
